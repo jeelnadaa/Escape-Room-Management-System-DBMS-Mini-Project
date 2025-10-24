@@ -1,0 +1,75 @@
+{% extends "layout.html" %}
+{% block content %}
+<h1 class="text-4xl font-bold text-gray-800 mb-8">Admin Dashboard</h1>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+    <!-- Column 1: Add Room & Add Session -->
+    <div class="space-y-8">
+        <!-- Add New Room -->
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">Add New Room</h2>
+            <form action="{{ url_for('add_room') }}" method="POST" class="space-y-4">
+                <input type="text" name="theme" placeholder="Theme" required class="w-full px-3 py-2 border rounded-lg">
+                <input type="text" name="difficulty" placeholder="Difficulty (e.g., Medium)" required class="w-full px-3 py-2 border rounded-lg">
+                <input type="number" name="capacity" placeholder="Capacity" required class="w-full px-3 py-2 border rounded-lg">
+                <input type="number" name="duration" placeholder="Duration (in minutes)" required class="w-full px-3 py-2 border rounded-lg">
+                <textarea name="description" placeholder="Description" rows="3" class="w-full px-3 py-2 border rounded-lg"></textarea>
+                <input type="text" name="image_url" placeholder="Image URL (e.g., https://...)" class="w-full px-3 py-2 border rounded-lg">
+                <button type="submit" class="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg">Add Room</button>
+            </form>
+        </div>
+
+        <!-- Add New Session -->
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">Add New Session</h2>
+            <form action="{{ url_for('add_session') }}" method="POST" class="space-y-4">
+                <select name="room_id" required class="w-full px-3 py-2 border rounded-lg">
+                    <option value="">-- Select a Room --</option>
+                    {% for room in rooms %}
+                        <option value="{{ room.room_id }}">{{ room.theme }}</option>
+                    {% endfor %}
+                </select>
+                <input type="datetime-local" name="date_time" required class="w-full px-3 py-2 border rounded-lg">
+                <button type="submit" class="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg">Add Session</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Column 2: Add Puzzle & Add Hint -->
+    <div class="space-y-8">
+        <!-- Add New Puzzle -->
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">Add New Puzzle</h2>
+            <form action="{{ url_for('add_puzzle') }}" method="POST" class="space-y-4">
+                <select name="room_id" required class="w-full px-3 py-2 border rounded-lg">
+                    <option value="">-- Select a Room --</option>
+                    {% for room in rooms %}
+                        <option value="{{ room.room_id }}">{{ room.theme }}</option>
+                    {% endfor %}
+                </select>
+                <textarea name="description" placeholder="Puzzle Description" rows="3" required class="w-full px-3 py-2 border rounded-lg"></textarea>
+                <input type="text" name="type" placeholder="Puzzle Type (e.g., Riddle)" class="w-full px-3 py-2 border rounded-lg">
+                <input type="number" name="sequence_number" placeholder="Sequence (e.g., 1)" required class="w-full px-3 py-2 border rounded-lg">
+                <input type="text" name="answer" placeholder="Answer (case-insensitive)" required class="w-full px-3 py-2 border rounded-lg">
+                <button type="submit" class="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg">Add Puzzle</button>
+            </form>
+        </div>
+
+        <!-- Add New Hint -->
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">Add New Hint</h2>
+            <form action="{{ url_for('add_hint') }}" method="POST" class="space-y-4">
+                <select name="puzzle_id" required class="w-full px-3 py-2 border rounded-lg">
+                    <option value="">-- Select a Puzzle --</option>
+                    {% for puzzle in puzzles %}
+                        <option value="{{ puzzle.puzzle_id }}">({{ puzzle.theme }}) - {{ puzzle.description[:50] }}...</option>
+                    {% endfor %}
+                </select>
+                <input type="text" name="hint_text" placeholder="Hint Text" required class="w-full px-3 py-2 border rounded-lg">
+                <button type="submit" class="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg">Add Hint</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

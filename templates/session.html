@@ -1,0 +1,62 @@
+{% extends "layout.html" %}
+{% block content %}
+<h1 class="text-4xl font-bold text-gray-800 mb-2">Playing: {{ session.theme }}</h1>
+<p class="text-xl text-gray-600 mb-8">Session Time: {{ session.date_time.strftime('%a, %b %d, %Y at %I:%M %p') }}</I>
+
+<div class="space-y-8">
+    {% if not puzzles %}
+        <p class="text-lg text-gray-600">This room has no puzzles yet. The admin needs to add some!</p>
+    {% endif %}
+
+    {% for puzzle in puzzles %}
+        {% set is_solved = puzzle.puzzle_id in solved_puzzle_ids %}
+        
+        <div class="bg-white rounded-lg shadow-lg border-l-8 
+                    {% if is_solved %} border-green-500 {% else %} border-blue-500 {% endif %}">
+            <div class="p-6">
+                <h2 class="text-2xl font-bold text-gray-900 mb-4">
+                    Puzzle {{ puzzle.sequence_number }}:
+                    {% if is_solved %}
+                        <span class="text-green-600 ml-2">(Solved!)</span>
+                    {% endif %}
+                </h2>
+                <p class="text-lg text-gray-700 mb-6">{{ puzzle.description }}</p>
+
+                {% if not is_solved %}
+                    <!-- Hints Section -->
+                    {% if puzzle.hints %}
+                    <div class="mb-6">
+                        <h4 class="font-semibold text-gray-700 mb-2">Available Hints:</h4>
+                        <ul class="list-disc list-inside space-y-1 pl-2">
+                            {% for hint in puzzle.hints %}
+                                <li class="text-gray-600">{{ hint.hint_text }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+
+                    <!-- Answer Form -->
+                    <form action="{{ url_for('submit_answer') }}" method="POST" class="flex flex-col sm:flex-row gap-2">
+                        <input type="hidden" name="session_id" value="{{ session.session_id }}">
+                        <input type="hidden" name="puzzle_id" value="{{ puzzle.puzzle_id }}">
+                        
+                        <label for="answer-{{ puzzle.puzzle_id }}" class="sr-only">Your Answer</label>
+                        <input type="text" id="answer-{{ puzzle.puzzle_id }}" name="answer" required 
+                               class="flex-grow px-4 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500"
+                               placeholder="Enter your answer...">
+                        
+                        <button type="submit" 
+                                class="py-2 px-6 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-md transition duration-300">
+                            Submit Answer
+                        </button>
+                    </form>
+                
+                {% else %}
+                    <!-- Solved State -->
+                    <p class="text-lg font-semibold text-green-700">You have solved this puzzle!</p>
+                {% endif %}
+            </div>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}
