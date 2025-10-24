@@ -132,7 +132,7 @@ DB_CONFIG = {
 
 ### 7️⃣ Run the Application
 ```bash
-flask run --debug
+python app.py
 ```
 App runs at: **http://127.0.0.1:5001**
 
